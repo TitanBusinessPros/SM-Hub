@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Social Media Hub Maker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at top left, #7c3aed, #06b6d4);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+    /* Background art */
+    .bg-shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.4;
+      animation: float 12s infinite ease-in-out alternate;
+      z-index: 0;
+    }
+    .bg1 { width: 400px; height: 400px; background: #7c3aed; top: -100px; left: -100px; }
+    .bg2 { width: 300px; height: 300px; background: #06b6d4; bottom: -80px; right: -80px; }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(40px); }
+    }
+
+    h1 {
+      margin: 20px 0;
+      font-size: 32px;
+      font-weight: 700;
+      z-index: 2;
+    }
+    .builder, .preview {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px) saturate(160%);
+      padding: 20px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 650px;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      z-index: 2;
+    }
+    label { display: block; margin-top: 12px; font-size: 14px; font-weight: 500; }
+    input, textarea {
+      width: 100%; padding: 10px; margin-top: 6px;
+      border: none; border-radius: 12px;
+      font-family: inherit; outline: none;
+    }
+    button {
+      margin-top: 16px;
+      background: linear-gradient(135deg,#7c3aed,#06b6d4);
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.4); }
+
+    /* Preview card */
+    .hub-card {
+      text-align: center;
+      padding: 25px;
+      position: relative;
+    }
+    .avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 20px;
+      background: linear-gradient(135deg,#7c3aed,#06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: 700;
+      margin: 0 auto 15px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+    }
+    .hub-name { font-size: 22px; font-weight: 700; }
+    .hub-bio { font-size: 14px; margin: 8px 0 20px; color: rgba(255,255,255,0.85); }
+    .links { display: flex; flex-direction: column; gap: 12px; }
+    .links a {
+      display: block;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: transform 0.25s ease, background 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .links a::before {
+      content: "";
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: linear-gradient(120deg, rgba(255,255,255,0.2), transparent 60%);
+      transform: rotate(25deg);
+      transition: all 0.5s;
+    }
+    .links a:hover { transform: translateY(-4px); background: rgba(255,255,255,0.25); }
+    .links a:hover::before { top: -20%; left: -20%; }
+
+  </style>
+</head>
+<body>
+  <div class="bg-shape bg1"></div>
+  <div class="bg-shape bg2"></div>
+
+  <h1>✨ Social Media Hub Maker ✨</h1>
+
+  <!-- Builder Form -->
+  <div class="builder">
+    <label>Initials</label>
+    <input type="text" id="initials" placeholder="AB">
+
+    <label>Name</label>
+    <input type="text" id="name" placeholder="Your Name">
+
+    <label>Bio</label>
+    <textarea id="bio" rows="2" placeholder="Short description about you"></textarea>
+
+    <label>Social Media Links (one per line, format: Service | URL)</label>
+    <textarea id="links" rows="6" placeholder="Website | https://example.com
+Instagram | https://instagram.com/yourname
+YouTube | https://youtube.com/@yourchannel"></textarea>
+
+    <button onclick="generateHub()">Generate Hub</button>
+    <button onclick="downloadHub()">Download Hub HTML</button>
+  </div>
+
+  <!-- Live Preview -->
+  <div class="preview" id="preview" style="display:none;">
+    <div class="hub-card">
+      <div class="avatar" id="p-avatar">AB</div>
+      <div class="hub-name" id="p-name">Your Name</div>
+      <div class="hub-bio" id="p-bio">Your bio will appear here</div>
+      <div class="links" id="p-links"></div>
+    </div>
+  </div>
+
+  <script>
+    function generateHub() {
+      const initials = document.getElementById('initials').value || '??';
+      const name = document.getElementById('name').value || 'Unnamed';
+      const bio = document.getElementById('bio').value || '';
+      const linksRaw = document.getElementById('links').value.trim();
+
+      document.getElementById('p-avatar').textContent = initials;
+      document.getElementById('p-name').textContent = name;
+      document.getElementById('p-bio').textContent = bio;
+
+      const linksContainer = document.getElementById('p-links');
+      linksContainer.innerHTML = '';
+
+      if (linksRaw) {
+        linksRaw.split('\n').forEach(line => {
+          const [title, url] = line.split('|').map(s => s.trim());
+          if (title && url) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = "_blank";
+            a.textContent = title;
+            linksContainer.appendChild(a);
+          }
+        });
+      }
+      document.getElementById('preview').style.display = 'block';
+    }
+
+    function downloadHub() {
+      generateHub(); 
+      const initials = document.getElementById('p-avatar').textContent;
+      const name = document.getElementById('p-name').textContent;
+      const bio = document.getElementById('p-bio').textContent;
+      const links = Array.from(document.querySelectorAll('#p-links a'))
+        .map(a => `<a href="${a.href}" target="_blank">${a.textContent}</a>`)
+        .join('\n      ');
+
+      const hubHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${name}'s Links</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+  body {margin:0;font-family:"Poppins",sans-serif;background:radial-gradient(circle at top left,#7c3aed,#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+  .card {background:rgba(255,255,255,0.08);backdrop-filter:blur(12px) saturate(160%);padding:30px;border-radius:20px;max-width:400px;width:100%;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.4);}
+  .avatar {width:90px;height:90px;border-radius:20px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;margin:0 auto 15px;box-shadow:0 6px 16px rgba(0,0,0,0.5);}
+  h1 {margin:10px 0 5px;font-size:22px;font-weight:700;}
+  p {font-size:14px;margin:0 0 20px;color:rgba(255,255,255,0.85);}
+  .links {display:flex;flex-direction:column;gap:12px;}
+  .links a {display:block;text-decoration:none;background:rgba(255,255,255,0.15);padding:14px;border-radius:12px;color:#fff;font-weight:500;transition:transform .25s,background .25s;position:relative;overflow:hidden;}
+  .links a:hover {transform:translateY(-4px);background:rgba(255,255,255,0.25);}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="avatar">${initials}</div>
+    <h1>${name}</h1>
+    <p>${bio}</p>
+    <div class="links">
+      ${links}
+    </div>
+  </div>
+</body>
+</html>`;
+
+      const blob = new Blob([hubHtml], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${name.replace(/\s+/g,'_')}_hub.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
