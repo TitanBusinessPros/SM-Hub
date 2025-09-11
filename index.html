@@ -1,235 +1,383 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Social Media Hub Maker</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: "Poppins", sans-serif;
-      background: radial-gradient(circle at top left, #7c3aed, #06b6d4);
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      overflow-x: hidden;
-    }
-    /* Background art */
-    .bg-shape {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.4;
-      animation: float 12s infinite ease-in-out alternate;
-      z-index: 0;
-    }
-    .bg1 { width: 400px; height: 400px; background: #7c3aed; top: -100px; left: -100px; }
-    .bg2 { width: 300px; height: 300px; background: #06b6d4; bottom: -80px; right: -80px; }
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      100% { transform: translateY(40px); }
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Social Media Hub Maker — Exportable</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#0b1028; --bg2:#071228; --accent1:#7c3aed; --accent2:#06b6d4;
+    --card-bg: rgba(255,255,255,0.06); --muted: rgba(255,255,255,0.75);
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    background: linear-gradient(120deg,var(--bg1),var(--bg2));
+    color:#fff; display:flex; align-items:flex-start; justify-content:center; padding:28px;
+  }
 
-    h1 {
-      margin: 20px 0;
-      font-size: 32px;
-      font-weight: 700;
-      z-index: 2;
-    }
-    .builder, .preview {
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(12px) saturate(160%);
-      padding: 20px;
-      border-radius: 20px;
-      width: 100%;
-      max-width: 650px;
-      margin-bottom: 25px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-      z-index: 2;
-    }
-    label { display: block; margin-top: 12px; font-size: 14px; font-weight: 500; }
-    input, textarea {
-      width: 100%; padding: 10px; margin-top: 6px;
-      border: none; border-radius: 12px;
-      font-family: inherit; outline: none;
-    }
-    button {
-      margin-top: 16px;
-      background: linear-gradient(135deg,#7c3aed,#06b6d4);
-      border: none;
-      color: #fff;
-      font-weight: 600;
-      padding: 12px 18px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.4); }
+  /* decorative canvas/art */
+  .art {
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+  }
+  .art svg{width:100%;height:100%;opacity:0.16;mix-blend-mode:screen}
 
-    /* Preview card */
-    .hub-card {
-      text-align: center;
-      padding: 25px;
-      position: relative;
-    }
-    .avatar {
-      width: 90px;
-      height: 90px;
-      border-radius: 20px;
-      background: linear-gradient(135deg,#7c3aed,#06b6d4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      font-weight: 700;
-      margin: 0 auto 15px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.5);
-    }
-    .hub-name { font-size: 22px; font-weight: 700; }
-    .hub-bio { font-size: 14px; margin: 8px 0 20px; color: rgba(255,255,255,0.85); }
-    .links { display: flex; flex-direction: column; gap: 12px; }
-    .links a {
-      display: block;
-      padding: 14px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.12);
-      color: #fff;
-      text-decoration: none;
-      font-weight: 500;
-      transition: transform 0.25s ease, background 0.25s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .links a::before {
-      content: "";
-      position: absolute;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: linear-gradient(120deg, rgba(255,255,255,0.2), transparent 60%);
-      transform: rotate(25deg);
-      transition: all 0.5s;
-    }
-    .links a:hover { transform: translateY(-4px); background: rgba(255,255,255,0.25); }
-    .links a:hover::before { top: -20%; left: -20%; }
+  .wrap{
+    width:100%; max-width:1100px; display:grid; grid-template-columns: 1fr 480px; gap:24px; z-index:2;
+  }
 
-  </style>
+  /* Builder panel */
+  .panel{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:calc(var(--radius) + 6px); padding:22px; box-shadow:0 14px 40px rgba(2,6,23,0.6);
+    border:1px solid rgba(255,255,255,0.04);
+  }
+  h1{margin:6px 0 10px;font-weight:800;font-size:20px}
+  p.lead{margin:0 0 12px;color:var(--muted);font-size:13px}
+
+  label{display:block;margin-top:10px;font-size:13px;font-weight:600;color:var(--muted)}
+  input[type="text"], textarea, select{
+    width:100%; padding:10px 12px; margin-top:8px; border-radius:10px; border:none; outline:none;
+    background:rgba(255,255,255,0.03); color: #fff; font-size:14px; resize:vertical;
+  }
+
+  .row{display:flex;gap:12px}
+  .small{font-size:12px;color:var(--muted);margin-top:8px}
+
+  .btns{display:flex;gap:12px;margin-top:14px}
+  button.primary{
+    background:linear-gradient(90deg,var(--accent1),var(--accent2)); border:0; color:#fff; padding:10px 14px;
+    border-radius:10px; font-weight:700; cursor:pointer;
+  }
+  button.ghost{
+    background:transparent;border:1px solid rgba(255,255,255,0.06); color:var(--muted); padding:10px 12px;border-radius:10px; cursor:pointer;
+  }
+
+  /* Preview panel */
+  .preview-wrap{
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card{
+    width:100%; max-width:420px; border-radius:18px; padding:24px; text-align:center;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    border:1px solid rgba(255,255,255,0.04); box-shadow: 0 12px 40px rgba(2,6,23,0.6);
+  }
+  .avatar{
+    width:96px;height:96px;border-radius:18px;margin:0 auto 14px;display:grid;place-items:center;
+    font-weight:800;font-size:34px; color:white;
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    box-shadow: 0 8px 26px rgba(7,10,29,0.5);
+  }
+  .name{font-size:20px;font-weight:800;margin:6px 0}
+  .bio{color:var(--muted);font-size:13px;margin:0 0 14px;white-space:normal;word-break:break-word;overflow-wrap:break-word}
+
+  .links{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+  .link{
+    display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;
+    text-decoration:none;color:#fff;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.03); transition: transform .16s ease, box-shadow .16s ease;
+    word-break:break-word; overflow-wrap:break-word;
+  }
+  .link:hover{transform:translateY(-6px);box-shadow:0 18px 46px rgba(2,6,23,0.6)}
+  .left{display:flex;align-items:center;gap:12px}
+  .pill{width:48px;height:48px;border-radius:10px;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--accent1),var(--accent2));box-shadow:0 6px 18px rgba(7,10,29,0.45)}
+  .title-wrap{text-align:left}
+  .title{font-weight:700;font-size:14px}
+  .sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+  /* source area fallback */
+  #sourceArea{width:100%;height:220px;margin-top:12px;border-radius:10px;padding:12px;background:rgba(0,0,0,0.06);color:#fff;border:1px solid rgba(255,255,255,0.03);font-family:monospace;font-size:12px;white-space:pre-wrap;overflow:auto}
+
+  /* Responsive */
+  @media (max-width:980px){
+    .wrap{grid-template-columns:1fr}
+    .preview-wrap{order:-1;margin-bottom:12px}
+  }
+</style>
 </head>
 <body>
-  <div class="bg-shape bg1"></div>
-  <div class="bg-shape bg2"></div>
 
-  <h1>✨ Social Media Hub Maker ✨</h1>
-
-  <!-- Builder Form -->
-  <div class="builder">
-    <label>Initials</label>
-    <input type="text" id="initials" placeholder="AB">
-
-    <label>Name</label>
-    <input type="text" id="name" placeholder="Your Name">
-
-    <label>Bio</label>
-    <textarea id="bio" rows="2" placeholder="Short description about you"></textarea>
-
-    <label>Social Media Links (one per line, format: Service | URL)</label>
-    <textarea id="links" rows="6" placeholder="Website | https://example.com
-Instagram | https://instagram.com/yourname
-YouTube | https://youtube.com/@yourchannel"></textarea>
-
-    <button onclick="generateHub()">Generate Hub</button>
-    <button onclick="downloadHub()">Download Hub HTML</button>
+  <!-- Decorative SVG art -->
+  <div class="art" aria-hidden>
+    <svg viewBox="0 0 1200 600" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+      </defs>
+      <path d="M0,120 C150,220 300,40 500,120 C700,200 850,40 1200,120 L1200,600 L0,600 Z" fill="url(#g1)"/>
+    </svg>
   </div>
 
-  <!-- Live Preview -->
-  <div class="preview" id="preview" style="display:none;">
-    <div class="hub-card">
-      <div class="avatar" id="p-avatar">AB</div>
-      <div class="hub-name" id="p-name">Your Name</div>
-      <div class="hub-bio" id="p-bio">Your bio will appear here</div>
-      <div class="links" id="p-links"></div>
-    </div>
+  <div class="wrap" role="main">
+    <!-- Builder -->
+    <section class="panel" aria-label="Builder">
+      <h1>Social Media Hub Maker</h1>
+      <p class="lead">Type links (one per line). Use <code>Service | URL</code> or just paste an URL per line. Click Generate then Download or Copy.</p>
+
+      <label for="initials">Initials (avatar)</label>
+      <input id="initials" type="text" maxlength="4" placeholder="AB" value="AB" />
+
+      <label for="name">Display name</label>
+      <input id="name" type="text" placeholder="Your name" value="Alex Bright" />
+
+      <label for="bio">Bio / tagline</label>
+      <textarea id="bio" rows="2" placeholder="Short tagline">Creator &amp; curious human — building things.</textarea>
+
+      <label for="links">Links (one per line — Service | URL)</label>
+      <textarea id="links" rows="8" placeholder="Website | https://example.com
+Newsletter | https://newsletter.example.com
+Contact | mailto:hello@example.com">Website | https://example.com
+Blog | https://blog.example.com
+Newsletter | https://newsletter.example.com
+Contact | mailto:hello@example.com</textarea>
+
+      <div class="btns">
+        <button class="primary" id="btnGenerate">Generate</button>
+        <button class="ghost" id="btnDownload">Download HTML</button>
+        <button class="ghost" id="btnCopy">Copy HTML</button>
+      </div>
+
+      <div class="small">If download is blocked by your browser, use <strong>Copy HTML</strong> and paste into a file, save with <code>.html</code>.</div>
+
+      <div id="sourceArea" style="display:none" aria-hidden="true"></div>
+    </section>
+
+    <!-- Preview -->
+    <aside class="preview-wrap">
+      <div class="card" aria-live="polite" id="previewCard">
+        <div class="avatar" id="pvInitials">AB</div>
+        <div class="name" id="pvName">Alex Bright</div>
+        <div class="bio" id="pvBio">Creator &amp; curious human — building things.</div>
+        <div class="links" id="pvLinks" aria-label="Links area"></div>
+      </div>
+    </aside>
   </div>
 
-  <script>
-    function generateHub() {
-      const initials = document.getElementById('initials').value || '??';
-      const name = document.getElementById('name').value || 'Unnamed';
-      const bio = document.getElementById('bio').value || '';
-      const linksRaw = document.getElementById('links').value.trim();
+<script>
+/* Utilities */
+function esc(s){
+  if(s == null) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
 
-      document.getElementById('p-avatar').textContent = initials;
-      document.getElementById('p-name').textContent = name;
-      document.getElementById('p-bio').textContent = bio;
+/* Robust line parser:
+  Accepts:
+    "Service | https://..."
+    "https://example.com"
+    "Service | mailto:..."
+    "Service | https://... | subtitle"
+*/
+function parseLines(text){
+  const rows = text.split(/\r?\n/).map(r=>r.trim()).filter(Boolean);
+  const out = [];
+  for(const r of rows){
+    // split on first | up to two splits
+    const parts = r.split('|').map(p=>p.trim());
+    let title = parts[0] || '';
+    let url = parts[1] || '';
+    let subtitle = parts[2] || '';
 
-      const linksContainer = document.getElementById('p-links');
-      linksContainer.innerHTML = '';
-
-      if (linksRaw) {
-        linksRaw.split('\n').forEach(line => {
-          const [title, url] = line.split('|').map(s => s.trim());
-          if (title && url) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.target = "_blank";
-            a.textContent = title;
-            linksContainer.appendChild(a);
-          }
-        });
-      }
-      document.getElementById('preview').style.display = 'block';
+    // If user only provided a URL in the first part, make title from hostname
+    const looksLikeUrl = s => /^(https?:\/\/|mailto:|tel:)/i.test(s) || /\.[a-z]{2,}\/?/.test(s);
+    if(!url && looksLikeUrl(title)){
+      url = title;
+      // Use domain or the URL itself for title if no explicit service
+      try {
+        const u = new URL(url.startsWith('http') ? url : 'https://'+url);
+        title = u.hostname.replace(/^www\./,'');
+      } catch(e){ title = url; }
     }
+    if(title && url) out.push({title, url, subtitle});
+  }
+  return out;
+}
 
-    function downloadHub() {
-      generateHub(); 
-      const initials = document.getElementById('p-avatar').textContent;
-      const name = document.getElementById('p-name').textContent;
-      const bio = document.getElementById('p-bio').textContent;
-      const links = Array.from(document.querySelectorAll('#p-links a'))
-        .map(a => `<a href="${a.href}" target="_blank">${a.textContent}</a>`)
-        .join('\n      ');
+/* Build preview */
+function buildPreview(){
+  const initials = document.getElementById('initials').value.trim() || '??';
+  const name = document.getElementById('name').value.trim() || 'Unnamed';
+  const bio = document.getElementById('bio').value.trim() || '';
+  const raw = document.getElementById('links').value || '';
 
-      const hubHtml = `<!DOCTYPE html>
+  const parsed = parseLines(raw);
+  // Update preview
+  document.getElementById('pvInitials').textContent = initials.slice(0,4).toUpperCase();
+  document.getElementById('pvName').textContent = name;
+  document.getElementById('pvBio').textContent = bio;
+
+  const container = document.getElementById('pvLinks');
+  container.innerHTML = '';
+  if(parsed.length === 0){
+    const no = document.createElement('div');
+    no.className = 'sub';
+    no.textContent = 'No links entered yet.';
+    container.appendChild(no);
+  } else {
+    parsed.forEach(it=>{
+      const a = document.createElement('a');
+      a.className = 'link';
+      a.href = it.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.innerHTML = `
+        <div class="left">
+          <div class="pill">${esc(it.title).slice(0,2).toUpperCase()}</div>
+          <div class="title-wrap">
+            <div class="title">${esc(it.title)}</div>
+            ${it.subtitle ? `<div class="sub">${esc(it.subtitle)}</div>` : ''}
+          </div>
+        </div>
+        <div style="opacity:.9; font-weight:700">➔</div>
+      `;
+      container.appendChild(a);
+    });
+  }
+}
+
+/* Build final standalone HTML string safely */
+function buildHubHtmlString(){
+  const initials = esc(document.getElementById('initials').value.trim() || '??');
+  const name = esc(document.getElementById('name').value.trim() || 'Unnamed');
+  const bio = esc(document.getElementById('bio').value.trim() || '');
+  const parsed = parseLines(document.getElementById('links').value || '');
+
+  // Build links markup with escaped content
+  const linksHtml = parsed.map(it => {
+    const title = esc(it.title);
+    const url = esc(it.url);
+    const subtitle = esc(it.subtitle || '');
+    return `<a class="link" href="${url}" target="_blank" rel="noopener noreferrer">
+      <div class="left">
+        <div class="pill">${title.slice(0,2).toUpperCase()}</div>
+        <div class="title-wrap">
+          <div class="title">${title}</div>
+          ${subtitle ? `<div class="sub">${subtitle}</div>` : ''}
+        </div>
+      </div>
+      <div style="opacity:.9;font-weight:700;">➔</div>
+    </a>`;
+  }).join("\n      ");
+
+  const full = `<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${name}'s Links</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>${name} — Links</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-  body {margin:0;font-family:"Poppins",sans-serif;background:radial-gradient(circle at top left,#7c3aed,#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
-  .card {background:rgba(255,255,255,0.08);backdrop-filter:blur(12px) saturate(160%);padding:30px;border-radius:20px;max-width:400px;width:100%;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.4);}
-  .avatar {width:90px;height:90px;border-radius:20px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;margin:0 auto 15px;box-shadow:0 6px 16px rgba(0,0,0,0.5);}
-  h1 {margin:10px 0 5px;font-size:22px;font-weight:700;}
-  p {font-size:14px;margin:0 0 20px;color:rgba(255,255,255,0.85);}
-  .links {display:flex;flex-direction:column;gap:12px;}
-  .links a {display:block;text-decoration:none;background:rgba(255,255,255,0.15);padding:14px;border-radius:12px;color:#fff;font-weight:500;transition:transform .25s,background .25s;position:relative;overflow:hidden;}
-  .links a:hover {transform:translateY(-4px);background:rgba(255,255,255,0.25);}
+  :root{--accent1:${'#7c3aed'};--accent2:${'#06b6d4'};}
+  *{box-sizing:border-box}html,body{height:100%}
+  body{margin:0;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(120deg,#0b1028,#071228);color:#fff;display:flex;align-items:center;justify-content:center;padding:30px}
+  .card{width:100%;max-width:480px;border-radius:18px;padding:28px;text-align:center;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);box-shadow:0 14px 40px rgba(2,6,23,0.6)}
+  .avatar{width:96px;height:96px;border-radius:18px;margin:0 auto 14px;display:grid;place-items:center;font-weight:800;font-size:34px;background:linear-gradient(135deg,var(--accent1),var(--accent2));box-shadow:0 8px 26px rgba(7,10,29,0.5)}
+  h1{margin:6px 0 0;font-size:22px}
+  p.bio{color:rgba(255,255,255,0.85);font-size:14px;margin:8px 0 18px;word-break:break-word}
+  .links{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+  .link{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;text-decoration:none;color:#fff;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);transition:transform .16s,box-shadow .16s}
+  .link:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(2,6,23,0.5)}
+  .pill{width:48px;height:48px;border-radius:10px;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--accent1),var(--accent2))}
+  .title{font-weight:700}
+  .sub{font-size:12px;color:rgba(255,255,255,0.78);margin-top:4px}
+  @media (max-width:520px){body{padding:18px}.card{padding:18px}}
 </style>
 </head>
 <body>
   <div class="card">
     <div class="avatar">${initials}</div>
     <h1>${name}</h1>
-    <p>${bio}</p>
+    <p class="bio">${bio}</p>
     <div class="links">
-      ${links}
+      ${linksHtml}
     </div>
   </div>
 </body>
 </html>`;
+  return full;
+}
 
-      const blob = new Blob([hubHtml], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${name.replace(/\s+/g,'_')}_hub.html`;
-      a.click();
-      URL.revokeObjectURL(url);
+/* Download helper with fallback */
+function downloadHub(){
+  const html = buildHubHtmlString();
+  try {
+    const blob = new Blob([html], {type: 'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const name = (document.getElementById('name').value.trim() || 'my_hub').replace(/\s+/g,'_');
+    a.download = `${name}_hub.html`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    // Hide source area if visible
+    document.getElementById('sourceArea').style.display = 'none';
+    alert('Download triggered. If your browser blocked it, use "Copy HTML" to save manually.');
+  } catch (e){
+    // fallback to showing source
+    showSource(html);
+  }
+}
+
+/* Copy HTML to clipboard fallback + show area */
+async function copyHtmlToClipboard(){
+  const html = buildHubHtmlString();
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(html);
+      alert('Generated HTML copied to clipboard. Paste into a .html file and save.');
+      document.getElementById('sourceArea').style.display = 'none';
+    } else {
+      showSource(html);
+      alert('Clipboard not available — the HTML is shown below for manual copy.');
     }
-  </script>
+  }catch(e){
+    showSource(html);
+    alert('Could not copy to clipboard. The HTML is shown below for manual copy.');
+  }
+}
+
+function showSource(src){
+  const area = document.getElementById('sourceArea');
+  area.style.display = 'block';
+  area.textContent = src;
+  area.scrollTop = 0;
+}
+
+/* Event wiring */
+document.getElementById('btnGenerate').addEventListener('click', ()=>{
+  buildPreview();
+  // hide source area when preview generated
+  document.getElementById('sourceArea').style.display = 'none';
+});
+document.getElementById('btnDownload').addEventListener('click', ()=> {
+  // ensure preview up-to-date
+  buildPreview();
+  downloadHub();
+});
+document.getElementById('btnCopy').addEventListener('click', ()=> {
+  buildPreview();
+  copyHtmlToClipboard();
+});
+
+/* Live preview: update while typing but debounced */
+let debounceTimer = 0;
+['initials','name','bio','links'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=>{
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(buildPreview, 220);
+  });
+});
+
+// initial render
+buildPreview();
+</script>
 </body>
 </html>
