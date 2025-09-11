@@ -3,381 +3,479 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Social Media Hub Maker — Exportable</title>
+<title>Social Hub Maker — Multi profile (Fixed)</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg1:#0b1028; --bg2:#071228; --accent1:#7c3aed; --accent2:#06b6d4;
-    --card-bg: rgba(255,255,255,0.06); --muted: rgba(255,255,255,0.75);
-    --radius:16px;
+    --bg1:#071227; --bg2:#0b1930; --accent1:#7c3aed; --accent2:#06b6d4;
+    --muted: rgba(255,255,255,0.78);
   }
   *{box-sizing:border-box}
-  html,body{height:100%}
+  html,body{height:100%;margin:0}
   body{
-    margin:0;font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial;
-    background: linear-gradient(120deg,var(--bg1),var(--bg2));
-    color:#fff; display:flex; align-items:flex-start; justify-content:center; padding:28px;
+    font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    background:linear-gradient(120deg,var(--bg1),var(--bg2));
+    color:#fff;padding:20px;min-height:100vh;
   }
 
-  /* decorative canvas/art */
-  .art {
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-  }
-  .art svg{width:100%;height:100%;opacity:0.16;mix-blend-mode:screen}
-
-  .wrap{
-    width:100%; max-width:1100px; display:grid; grid-template-columns: 1fr 480px; gap:24px; z-index:2;
-  }
-
-  /* Builder panel */
+  /* Layout */
+  .container{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 520px;gap:20px;align-items:start}
+  @media (max-width:980px){.container{grid-template-columns:1fr;}}
   .panel{
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:calc(var(--radius) + 6px); padding:22px; box-shadow:0 14px 40px rgba(2,6,23,0.6);
-    border:1px solid rgba(255,255,255,0.04);
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.03);
+    box-shadow:0 10px 30px rgba(2,6,23,0.6);
   }
-  h1{margin:6px 0 10px;font-weight:800;font-size:20px}
+
+  h1{margin:6px 0 8px;font-size:18px;font-weight:800}
   p.lead{margin:0 0 12px;color:var(--muted);font-size:13px}
 
-  label{display:block;margin-top:10px;font-size:13px;font-weight:600;color:var(--muted)}
-  input[type="text"], textarea, select{
-    width:100%; padding:10px 12px; margin-top:8px; border-radius:10px; border:none; outline:none;
-    background:rgba(255,255,255,0.03); color: #fff; font-size:14px; resize:vertical;
+  label{display:block;margin-top:10px;font-size:13px;color:var(--muted)}
+  input[type="text"], textarea {
+    width:100%;padding:10px;margin-top:8px;border-radius:10px;border:none;background:rgba(255,255,255,0.03);
+    color:#fff;font-size:14px;outline:none;resize:vertical;
   }
 
-  .row{display:flex;gap:12px}
+  .btn-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  button{padding:10px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+  .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+  /* Profiles list */
+  .profiles-list{margin-top:14px;display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;padding-right:6px}
+  .profile-item{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)}
+  .profile-item .meta{display:flex;gap:10px;align-items:center}
+  .profile-pill{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:grid;place-items:center;font-weight:800}
+  .profile-name{font-weight:700}
+  .profile-controls{display:flex;gap:6px}
+
+  /* Preview area */
+  .preview{
+    display:flex;flex-direction:column;gap:12px;height:calc(100vh - 120px);
+  }
+  .preview-inner{overflow:auto;padding-right:8px}
+  .card{
+    width:100%;max-width:480px;margin:0 auto;padding:20px;border-radius:14px;text-align:center;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 36px rgba(2,6,23,0.6)
+  }
+  .avatar{width:86px;height:86px;border-radius:16px;margin:0 auto 12px;display:grid;place-items:center;font-size:30px;font-weight:800;background:linear-gradient(135deg,var(--accent1),var(--accent2));box-shadow:0 8px 22px rgba(7,10,29,0.5)}
+  .name{font-weight:800;font-size:20px;margin:6px 0 0}
+  .bio{color:var(--muted);font-size:13px;margin:6px 0 12px;white-space:normal;word-break:break-word}
+  .links{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+  .link{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:12px;background:rgba(255,255,255,0.03);color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,0.03)}
+  .link .left{display:flex;gap:12px;align-items:center}
+  .pill{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--accent1),var(--accent2))}
+  .title{font-weight:700}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:4px;word-break:break-all}
+
+  /* source (fallback) */
+  #sourceArea{display:none;margin-top:12px;padding:12px;border-radius:10px;background:rgba(0,0,0,0.06);font-family:monospace;font-size:12px;color:#fff;border:1px solid rgba(255,255,255,0.03);white-space:pre-wrap;max-height:240px;overflow:auto}
   .small{font-size:12px;color:var(--muted);margin-top:8px}
 
-  .btns{display:flex;gap:12px;margin-top:14px}
-  button.primary{
-    background:linear-gradient(90deg,var(--accent1),var(--accent2)); border:0; color:#fff; padding:10px 14px;
-    border-radius:10px; font-weight:700; cursor:pointer;
-  }
-  button.ghost{
-    background:transparent;border:1px solid rgba(255,255,255,0.06); color:var(--muted); padding:10px 12px;border-radius:10px; cursor:pointer;
-  }
+  .control-sm{padding:6px 8px;border-radius:8px;font-weight:700;border:0;cursor:pointer}
+  .control-edit{background:#2b2f45;color:#fff}
+  .control-del{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  .control-up{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  .control-down{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
 
-  /* Preview panel */
-  .preview-wrap{
-    display:flex; align-items:center; justify-content:center;
-  }
-  .card{
-    width:100%; max-width:420px; border-radius:18px; padding:24px; text-align:center;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-    border:1px solid rgba(255,255,255,0.04); box-shadow: 0 12px 40px rgba(2,6,23,0.6);
-  }
-  .avatar{
-    width:96px;height:96px;border-radius:18px;margin:0 auto 14px;display:grid;place-items:center;
-    font-weight:800;font-size:34px; color:white;
-    background:linear-gradient(135deg,var(--accent1),var(--accent2));
-    box-shadow: 0 8px 26px rgba(7,10,29,0.5);
-  }
-  .name{font-size:20px;font-weight:800;margin:6px 0}
-  .bio{color:var(--muted);font-size:13px;margin:0 0 14px;white-space:normal;word-break:break-word;overflow-wrap:break-word}
-
-  .links{display:flex;flex-direction:column;gap:12px;align-items:stretch}
-  .link{
-    display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;
-    text-decoration:none;color:#fff;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    border:1px solid rgba(255,255,255,0.03); transition: transform .16s ease, box-shadow .16s ease;
-    word-break:break-word; overflow-wrap:break-word;
-  }
-  .link:hover{transform:translateY(-6px);box-shadow:0 18px 46px rgba(2,6,23,0.6)}
-  .left{display:flex;align-items:center;gap:12px}
-  .pill{width:48px;height:48px;border-radius:10px;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--accent1),var(--accent2));box-shadow:0 6px 18px rgba(7,10,29,0.45)}
-  .title-wrap{text-align:left}
-  .title{font-weight:700;font-size:14px}
-  .sub{font-size:12px;color:var(--muted);margin-top:2px}
-
-  /* source area fallback */
-  #sourceArea{width:100%;height:220px;margin-top:12px;border-radius:10px;padding:12px;background:rgba(0,0,0,0.06);color:#fff;border:1px solid rgba(255,255,255,0.03);font-family:monospace;font-size:12px;white-space:pre-wrap;overflow:auto}
-
-  /* Responsive */
-  @media (max-width:980px){
-    .wrap{grid-template-columns:1fr}
-    .preview-wrap{order:-1;margin-bottom:12px}
-  }
 </style>
 </head>
 <body>
-
-  <!-- Decorative SVG art -->
-  <div class="art" aria-hidden>
-    <svg viewBox="0 0 1200 600" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
-      </defs>
-      <path d="M0,120 C150,220 300,40 500,120 C700,200 850,40 1200,120 L1200,600 L0,600 Z" fill="url(#g1)"/>
-    </svg>
-  </div>
-
-  <div class="wrap" role="main">
-    <!-- Builder -->
+  <div class="container">
+    <!-- Builder panel -->
     <section class="panel" aria-label="Builder">
-      <h1>Social Media Hub Maker</h1>
-      <p class="lead">Type links (one per line). Use <code>Service | URL</code> or just paste an URL per line. Click Generate then Download or Copy.</p>
+      <h1>Social Hub Maker — Multi-profile</h1>
+      <p class="lead">Add multiple profiles, edit, reorder, and export them all as one scrollable HTML file. Profiles are saved locally in your browser.</p>
 
-      <label for="initials">Initials (avatar)</label>
-      <input id="initials" type="text" maxlength="4" placeholder="AB" value="AB" />
+      <label>Initials</label>
+      <input id="fInitials" type="text" maxlength="4" placeholder="AB" value="AB">
 
-      <label for="name">Display name</label>
-      <input id="name" type="text" placeholder="Your name" value="Alex Bright" />
+      <label>Display name</label>
+      <input id="fName" type="text" placeholder="Alex Bright" value="Alex Bright">
 
-      <label for="bio">Bio / tagline</label>
-      <textarea id="bio" rows="2" placeholder="Short tagline">Creator &amp; curious human — building things.</textarea>
+      <label>Bio / Tagline</label>
+      <textarea id="fBio" rows="2" placeholder="Short tagline">Creator &amp; curious human — building things.</textarea>
 
-      <label for="links">Links (one per line — Service | URL)</label>
-      <textarea id="links" rows="8" placeholder="Website | https://example.com
-Newsletter | https://newsletter.example.com
-Contact | mailto:hello@example.com">Website | https://example.com
-Blog | https://blog.example.com
-Newsletter | https://newsletter.example.com
-Contact | mailto:hello@example.com</textarea>
+      <label>Links (one per line — `Service | URL` or just `URL`)</label>
+      <textarea id="fLinks" rows="5" placeholder="Website | https://example.com
+twitter.com/yourname
+mailto:you@example.com">Website | https://example.com
+blog | blog.example.com
+mailto:hello@example.com</textarea>
 
-      <div class="btns">
-        <button class="primary" id="btnGenerate">Generate</button>
-        <button class="ghost" id="btnDownload">Download HTML</button>
-        <button class="ghost" id="btnCopy">Copy HTML</button>
+      <div class="btn-row">
+        <button class="btn-primary" id="btnAdd">Add Profile</button>
+        <button class="btn-ghost" id="btnUpdate" title="Update selected profile" style="display:none">Update</button>
+        <button class="btn-ghost" id="btnClear">Clear Form</button>
       </div>
 
-      <div class="small">If download is blocked by your browser, use <strong>Copy HTML</strong> and paste into a file, save with <code>.html</code>.</div>
+      <div class="profiles-list" id="profilesList" aria-label="Profiles list"></div>
 
-      <div id="sourceArea" style="display:none" aria-hidden="true"></div>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn-primary" id="btnDownloadAll">Download All (HTML)</button>
+        <button class="btn-ghost" id="btnCopyAll">Copy HTML</button>
+        <button class="btn-ghost" id="btnClearAll" title="Remove all saved profiles">Clear All</button>
+      </div>
+
+      <div id="sourceArea" aria-hidden="true"></div>
+      <div class="small">If download is blocked, use Copy HTML and paste into a file named <code>myhub.html</code>. Profiles auto-save in localStorage so you don't lose them.</div>
     </section>
 
     <!-- Preview -->
-    <aside class="preview-wrap">
-      <div class="card" aria-live="polite" id="previewCard">
-        <div class="avatar" id="pvInitials">AB</div>
-        <div class="name" id="pvName">Alex Bright</div>
-        <div class="bio" id="pvBio">Creator &amp; curious human — building things.</div>
-        <div class="links" id="pvLinks" aria-label="Links area"></div>
+    <aside>
+      <div class="preview">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <h1 style="font-size:16px;margin:0">Preview (stacked)</h1>
+          <div class="small">Scrollable preview — matches exported output</div>
+        </div>
+        <div class="preview-inner" id="previewArea" role="region" aria-label="Preview area"></div>
       </div>
     </aside>
   </div>
 
 <script>
-/* Utilities */
-function esc(s){
-  if(s == null) return '';
-  return String(s)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#39;');
+/* ======== Utilities ======== */
+const STORAGE_KEY = 'social_hub_profiles_v2';
+
+function escapeHtml(s=''){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function attrEscape(s=''){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function normalizeUrl(u){
+  if(!u) return '';
+  u = u.trim();
+  if(/^(https?:|mailto:|tel:|\/\/)/i.test(u)) return u;
+  if(/^www\./i.test(u)) return 'https://' + u;
+  if(/\.[a-z]{2,}\/?/.test(u) && !/\s/.test(u)) return 'https://' + u;
+  return u; // leave as-is if it doesn't look like a URL
 }
 
-/* Robust line parser:
-  Accepts:
-    "Service | https://..."
-    "https://example.com"
-    "Service | mailto:..."
-    "Service | https://... | subtitle"
-*/
-function parseLines(text){
-  const rows = text.split(/\r?\n/).map(r=>r.trim()).filter(Boolean);
+function parseLinesToLinks(text){
+  const rows = String(text||'').split(/\r?\n/).map(r=>r.trim()).filter(Boolean);
   const out = [];
   for(const r of rows){
-    // split on first | up to two splits
-    const parts = r.split('|').map(p=>p.trim());
-    let title = parts[0] || '';
-    let url = parts[1] || '';
-    let subtitle = parts[2] || '';
+    const idx = r.indexOf('|');
+    let left = '', right = '';
+    if(idx >= 0){ left = r.slice(0,idx).trim(); right = r.slice(idx+1).trim(); }
+    else { left = r; right = ''; }
 
-    // If user only provided a URL in the first part, make title from hostname
-    const looksLikeUrl = s => /^(https?:\/\/|mailto:|tel:)/i.test(s) || /\.[a-z]{2,}\/?/.test(s);
+    const looksLikeUrl = s => /^(https?:\/\/|mailto:|tel:|\/\/)/i.test(s) || (/\./.test(s) && !/\s/.test(s));
+    let title = left || '';
+    let url = right || '';
+
     if(!url && looksLikeUrl(title)){
       url = title;
-      // Use domain or the URL itself for title if no explicit service
       try {
-        const u = new URL(url.startsWith('http') ? url : 'https://'+url);
+        const u = new URL(normalizeUrl(url).startsWith('http') ? normalizeUrl(url) : 'https://'+url);
         title = u.hostname.replace(/^www\./,'');
-      } catch(e){ title = url; }
+      } catch(e){
+        title = url;
+      }
     }
-    if(title && url) out.push({title, url, subtitle});
+    if(!title && url) title = url;
+    url = normalizeUrl(url);
+    if(title && url) out.push({title:title, url:url});
   }
   return out;
 }
 
-/* Build preview */
-function buildPreview(){
-  const initials = document.getElementById('initials').value.trim() || '??';
-  const name = document.getElementById('name').value.trim() || 'Unnamed';
-  const bio = document.getElementById('bio').value.trim() || '';
-  const raw = document.getElementById('links').value || '';
+/* ======== App state ======== */
+let profiles = []; // array of {initials,name,bio,links: [{title,url}]}
+let editIndex = null;
 
-  const parsed = parseLines(raw);
-  // Update preview
-  document.getElementById('pvInitials').textContent = initials.slice(0,4).toUpperCase();
-  document.getElementById('pvName').textContent = name;
-  document.getElementById('pvBio').textContent = bio;
-
-  const container = document.getElementById('pvLinks');
-  container.innerHTML = '';
-  if(parsed.length === 0){
-    const no = document.createElement('div');
-    no.className = 'sub';
-    no.textContent = 'No links entered yet.';
-    container.appendChild(no);
-  } else {
-    parsed.forEach(it=>{
-      const a = document.createElement('a');
-      a.className = 'link';
-      a.href = it.url;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.innerHTML = `
-        <div class="left">
-          <div class="pill">${esc(it.title).slice(0,2).toUpperCase()}</div>
-          <div class="title-wrap">
-            <div class="title">${esc(it.title)}</div>
-            ${it.subtitle ? `<div class="sub">${esc(it.subtitle)}</div>` : ''}
-          </div>
-        </div>
-        <div style="opacity:.9; font-weight:700">➔</div>
-      `;
-      container.appendChild(a);
-    });
-  }
+/* ======== Persistence ======== */
+function saveProfiles(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+  }catch(e){}
 }
 
-/* Build final standalone HTML string safely */
-function buildHubHtmlString(){
-  const initials = esc(document.getElementById('initials').value.trim() || '??');
-  const name = esc(document.getElementById('name').value.trim() || 'Unnamed');
-  const bio = esc(document.getElementById('bio').value.trim() || '');
-  const parsed = parseLines(document.getElementById('links').value || '');
+function loadProfiles(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) profiles = JSON.parse(raw) || [];
+  }catch(e){}
+}
 
-  // Build links markup with escaped content
-  const linksHtml = parsed.map(it => {
-    const title = esc(it.title);
-    const url = esc(it.url);
-    const subtitle = esc(it.subtitle || '');
-    return `<a class="link" href="${url}" target="_blank" rel="noopener noreferrer">
-      <div class="left">
-        <div class="pill">${title.slice(0,2).toUpperCase()}</div>
-        <div class="title-wrap">
-          <div class="title">${title}</div>
-          ${subtitle ? `<div class="sub">${subtitle}</div>` : ''}
-        </div>
-      </div>
-      <div style="opacity:.9;font-weight:700;">➔</div>
-    </a>`;
-  }).join("\n      ");
+/* ======== DOM helpers ======== */
+const $ = id => document.getElementById(id);
+
+/* ======== Rendering ======== */
+function renderProfilesList(){
+  const list = $('profilesList');
+  list.innerHTML = '';
+  profiles.forEach((p, i) => {
+    const item = document.createElement('div'); item.className = 'profile-item';
+    const meta = document.createElement('div'); meta.className = 'meta';
+    const pill = document.createElement('div'); pill.className = 'profile-pill'; pill.textContent = (p.initials||'??').slice(0,2).toUpperCase();
+    const name = document.createElement('div'); name.className = 'profile-name'; name.textContent = p.name || '(no name)';
+    meta.appendChild(pill); meta.appendChild(name);
+
+    const controls = document.createElement('div'); controls.className = 'profile-controls';
+    const editBtn = document.createElement('button'); editBtn.className = 'control-sm control-edit'; editBtn.textContent = 'Edit';
+    editBtn.onclick = ()=> loadProfileIntoForm(i);
+    const upBtn = document.createElement('button'); upBtn.className='control-sm control-up'; upBtn.textContent='↑';
+    upBtn.title='Move up'; upBtn.onclick = ()=> moveProfileUp(i);
+    const downBtn = document.createElement('button'); downBtn.className='control-sm control-down'; downBtn.textContent='↓';
+    downBtn.title='Move down'; downBtn.onclick = ()=> moveProfileDown(i);
+    const delBtn = document.createElement('button'); delBtn.className = 'control-sm control-del'; delBtn.textContent='Del';
+    delBtn.onclick = ()=> { if(confirm('Delete this profile?')) removeProfile(i); };
+    controls.appendChild(editBtn); controls.appendChild(upBtn); controls.appendChild(downBtn); controls.appendChild(delBtn);
+
+    item.appendChild(meta); item.appendChild(controls);
+    list.appendChild(item);
+  });
+}
+
+function renderPreview(){
+  const area = $('previewArea');
+  area.innerHTML = '';
+  if(profiles.length === 0){
+    const note = document.createElement('div'); note.textContent = 'No profiles yet — add one.';
+    note.style.color = 'var(--muted)'; area.appendChild(note); return;
+  }
+  profiles.forEach(p=>{
+    const card = document.createElement('div'); card.className = 'card';
+    const avatar = document.createElement('div'); avatar.className='avatar'; avatar.textContent = (p.initials||'??').slice(0,4).toUpperCase();
+    const name = document.createElement('div'); name.className='name'; name.textContent = p.name || '';
+    const bio = document.createElement('div'); bio.className='bio'; bio.textContent = p.bio || '';
+    const linksWrap = document.createElement('div'); linksWrap.className='links';
+
+    (p.links||[]).forEach(l=>{
+      const a = document.createElement('a'); a.className = 'link'; a.href = l.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      const left = document.createElement('div'); left.className = 'left';
+      const pill = document.createElement('div'); pill.className = 'pill'; pill.textContent = (l.title||'').slice(0,2).toUpperCase();
+      const wrap = document.createElement('div');
+      const t = document.createElement('div'); t.className = 'title'; t.textContent = l.title || l.url;
+      const s = document.createElement('div'); s.className = 'subtitle'; s.textContent = l.url;
+      wrap.appendChild(t); wrap.appendChild(s);
+      left.appendChild(pill); left.appendChild(wrap);
+      const arrow = document.createElement('div'); arrow.style.opacity='.9'; arrow.style.fontWeight='700'; arrow.textContent='➔';
+      a.appendChild(left); a.appendChild(arrow);
+      linksWrap.appendChild(a);
+    });
+
+    card.appendChild(avatar); card.appendChild(name); card.appendChild(bio); card.appendChild(linksWrap);
+    area.appendChild(card);
+  });
+}
+
+/* ======== CRUD ======== */
+function clearForm(){
+  $('fInitials').value=''; $('fName').value=''; $('fBio').value=''; $('fLinks').value='';
+  editIndex = null; $('btnUpdate').style.display = 'none'; $('btnAdd').style.display = '';
+}
+
+function loadProfileIntoForm(index){
+  const p = profiles[index];
+  if(!p) return;
+  $('fInitials').value = p.initials || '';
+  $('fName').value = p.name || '';
+  $('fBio').value = p.bio || '';
+  $('fLinks').value = (p.links || []).map(l => `${l.title} | ${l.url}`).join('\n');
+  editIndex = index;
+  $('btnUpdate').style.display = ''; $('btnAdd').style.display = 'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function addProfile(){
+  const obj = buildProfileFromForm();
+  if(!obj) return alert('Enter at least one valid link (URL) to add a profile.');
+  profiles.push(obj);
+  saveProfiles();
+  renderProfilesList();
+  renderPreview();
+  clearForm();
+}
+
+function updateProfile(){
+  if(editIndex == null) return;
+  const obj = buildProfileFromForm();
+  if(!obj) return alert('Enter at least one valid link (URL) to update the profile.');
+  profiles[editIndex] = obj;
+  saveProfiles();
+  renderProfilesList();
+  renderPreview();
+  clearForm();
+}
+
+function removeProfile(index){
+  profiles.splice(index,1);
+  saveProfiles();
+  renderProfilesList();
+  renderPreview();
+  clearForm();
+}
+
+function moveProfileUp(i){
+  if(i <= 0) return;
+  const t = profiles[i-1]; profiles[i-1] = profiles[i]; profiles[i] = t;
+  saveProfiles(); renderProfilesList(); renderPreview();
+}
+function moveProfileDown(i){
+  if(i >= profiles.length-1) return;
+  const t = profiles[i+1]; profiles[i+1] = profiles[i]; profiles[i] = t;
+  saveProfiles(); renderProfilesList(); renderPreview();
+}
+
+function buildProfileFromForm(){
+  const initials = String($('fInitials').value||'').trim().slice(0,4).toUpperCase();
+  const name = String($('fName').value||'').trim();
+  const bio = String($('fBio').value||'').trim();
+  const linksRaw = String($('fLinks').value||'');
+  const links = parseLinesToLinks(linksRaw);
+  if(links.length === 0) return null;
+  return {initials, name, bio, links};
+}
+
+/* ======== Export ======== */
+function buildAllHtml(){
+  // Create combined HTML for all profiles
+  const profilesCopy = profiles.slice();
+  const linkBlocks = profilesCopy.map(p => {
+    const initials = escapeHtml((p.initials||'').slice(0,4).toUpperCase());
+    const name = escapeHtml(p.name||'');
+    const bio = escapeHtml(p.bio||'');
+    const linksHtml = (p.links || []).map(l => {
+      const title = escapeHtml(l.title);
+      const url = attrEscape(l.url);
+      return `<a class="link" href="${url}" target="_blank" rel="noopener noreferrer">
+  <div class="left">
+    <div class="pill">${title.slice(0,2).toUpperCase()}</div>
+    <div>
+      <div class="title">${title}</div>
+      <div class="subtitle">${escapeHtml(l.url)}</div>
+    </div>
+  </div>
+  <div style="opacity:.9;font-weight:700">➔</div>
+</a>`;
+    }).join("\n      ");
+    return `<div class="card">
+  <div class="avatar">${initials}</div>
+  <div class="name">${name}</div>
+  <div class="bio">${bio}</div>
+  <div class="links">
+    ${linksHtml}
+  </div>
+</div>`;
+  }).join("\n\n  ");
 
   const full = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>${name} — Links</title>
+<title>My Social Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-  :root{--accent1:${'#7c3aed'};--accent2:${'#06b6d4'};}
-  *{box-sizing:border-box}html,body{height:100%}
-  body{margin:0;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(120deg,#0b1028,#071228);color:#fff;display:flex;align-items:center;justify-content:center;padding:30px}
-  .card{width:100%;max-width:480px;border-radius:18px;padding:28px;text-align:center;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);box-shadow:0 14px 40px rgba(2,6,23,0.6)}
-  .avatar{width:96px;height:96px;border-radius:18px;margin:0 auto 14px;display:grid;place-items:center;font-weight:800;font-size:34px;background:linear-gradient(135deg,var(--accent1),var(--accent2));box-shadow:0 8px 26px rgba(7,10,29,0.5)}
-  h1{margin:6px 0 0;font-size:22px}
-  p.bio{color:rgba(255,255,255,0.85);font-size:14px;margin:8px 0 18px;word-break:break-word}
-  .links{display:flex;flex-direction:column;gap:12px;align-items:stretch}
-  .link{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;text-decoration:none;color:#fff;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);transition:transform .16s,box-shadow .16s}
-  .link:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(2,6,23,0.5)}
-  .pill{width:48px;height:48px;border-radius:10px;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--accent1),var(--accent2))}
+  :root{--accent1:${'#7c3aed'};--accent2:${'#06b6d4'}}
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;font-family:Poppins,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(120deg,#071227,#0b1930);color:#fff;padding:30px;min-height:100vh;overflow-y:auto}
+  .card{width:100%;max-width:820px;margin:0 auto 28px;border-radius:14px;padding:20px;text-align:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 36px rgba(2,6,23,0.6)}
+  .avatar{width:86px;height:86px;border-radius:16px;margin:0 auto 12px;display:grid;place-items:center;font-size:30px;font-weight:800;background:linear-gradient(135deg,var(--accent1),var(--accent2));box-shadow:0 8px 22px rgba(7,10,29,0.5)}
+  .name{font-weight:800;font-size:20px;margin:6px 0 0}
+  .bio{color:rgba(255,255,255,0.85);font-size:14px;margin:6px 0 12px;word-break:break-word}
+  .links{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+  .link{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:12px;background:rgba(255,255,255,0.03);color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,0.03)}
+  .pill{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--accent1),var(--accent2))}
   .title{font-weight:700}
-  .sub{font-size:12px;color:rgba(255,255,255,0.78);margin-top:4px}
-  @media (max-width:520px){body{padding:18px}.card{padding:18px}}
+  .subtitle{font-size:12px;color:rgba(255,255,255,0.78);margin-top:4px;word-break:break-all}
+  @media (max-width:720px){body{padding:18px}.card{padding:14px}}
 </style>
 </head>
 <body>
-  <div class="card">
-    <div class="avatar">${initials}</div>
-    <h1>${name}</h1>
-    <p class="bio">${bio}</p>
-    <div class="links">
-      ${linksHtml}
-    </div>
-  </div>
+  ${linkBlocks}
 </body>
 </html>`;
   return full;
 }
 
-/* Download helper with fallback */
-function downloadHub(){
-  const html = buildHubHtmlString();
-  try {
-    const blob = new Blob([html], {type: 'text/html'});
+function downloadAll(){
+  if(profiles.length === 0) return alert('No profiles to export.');
+  const html = buildAllHtml();
+  try{
+    const blob = new Blob([html], {type:'text/html'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const name = (document.getElementById('name').value.trim() || 'my_hub').replace(/\s+/g,'_');
-    a.download = `${name}_hub.html`;
+    const fname = (profiles.length === 1 ? (profiles[0].name || 'my_hub') : 'my_social_hubs') .replace(/\s+/g,'_') + '.html';
+    a.download = fname;
     document.body.appendChild(a);
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    // Hide source area if visible
-    document.getElementById('sourceArea').style.display = 'none';
-    alert('Download triggered. If your browser blocked it, use "Copy HTML" to save manually.');
-  } catch (e){
-    // fallback to showing source
+    $('sourceArea').style.display = 'none';
+    alert('Download triggered. If blocked, use Copy HTML.');
+  }catch(e){
     showSource(html);
   }
 }
 
-/* Copy HTML to clipboard fallback + show area */
-async function copyHtmlToClipboard(){
-  const html = buildHubHtmlString();
+async function copyAll(){
+  if(profiles.length === 0) return alert('No profiles to export.');
+  const html = buildAllHtml();
   try{
     if(navigator.clipboard && navigator.clipboard.writeText){
       await navigator.clipboard.writeText(html);
-      alert('Generated HTML copied to clipboard. Paste into a .html file and save.');
-      document.getElementById('sourceArea').style.display = 'none';
+      alert('HTML copied to clipboard — paste into a file and save as .html');
+      $('sourceArea').style.display = 'none';
     } else {
       showSource(html);
-      alert('Clipboard not available — the HTML is shown below for manual copy.');
+      alert('Clipboard not available — HTML shown below to copy manually.');
     }
   }catch(e){
     showSource(html);
-    alert('Could not copy to clipboard. The HTML is shown below for manual copy.');
+    alert('Could not copy automatically — HTML shown below for manual copy.');
   }
 }
 
-function showSource(src){
-  const area = document.getElementById('sourceArea');
+function showSource(str){
+  const area = $('sourceArea');
   area.style.display = 'block';
-  area.textContent = src;
+  area.textContent = str;
   area.scrollTop = 0;
 }
 
-/* Event wiring */
-document.getElementById('btnGenerate').addEventListener('click', ()=>{
-  buildPreview();
-  // hide source area when preview generated
-  document.getElementById('sourceArea').style.display = 'none';
-});
-document.getElementById('btnDownload').addEventListener('click', ()=> {
-  // ensure preview up-to-date
-  buildPreview();
-  downloadHub();
-});
-document.getElementById('btnCopy').addEventListener('click', ()=> {
-  buildPreview();
-  copyHtmlToClipboard();
+/* ======== Bind UI ======== */
+$('btnAdd').addEventListener('click', addProfile);
+$('btnUpdate').addEventListener('click', updateProfile);
+$('btnClear').addEventListener('click', ()=> { clearForm(); });
+$('btnDownloadAll').addEventListener('click', downloadAll);
+$('btnCopyAll').addEventListener('click', copyAll);
+$('btnClearAll').addEventListener('click', ()=>{
+  if(!confirm('Clear all profiles from localStorage and UI?')) return;
+  profiles = []; saveProfiles(); renderProfilesList(); renderPreview(); clearForm();
 });
 
-/* Live preview: update while typing but debounced */
-let debounceTimer = 0;
-['initials','name','bio','links'].forEach(id=>{
-  document.getElementById(id).addEventListener('input', ()=>{
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(buildPreview, 220);
+/* Live debounce preview for current form */
+let _t;
+['fInitials','fName','fBio','fLinks'].forEach(id=>{
+  $(id).addEventListener('input', ()=>{
+    clearTimeout(_t);
+    _t = setTimeout(()=> {
+      // show preview of current form + existing profiles by temporarily rendering a combined array
+      const temp = buildProfileFromForm();
+      const area = $('previewArea');
+      if(!temp && profiles.length === 0){ renderPreview(); return; }
+      // show combined at top
+      const saved = profiles.slice();
+      // if editing replace current at editIndex for preview purposes
+      if(editIndex != null) saved[editIndex] = temp || saved[editIndex];
+      // temporarily set profiles = saved for render
+      const old = profiles;
+      profiles = saved;
+      renderPreview();
+      profiles = old;
+    }, 160);
   });
 });
 
-// initial render
-buildPreview();
+/* Initialize */
+loadProfiles();
+renderProfilesList();
+renderPreview();
+clearForm();
+
 </script>
 </body>
 </html>
